@@ -53,4 +53,20 @@ public class ServiceRegistry{
 
         return servicesClasses.get(index);
     }
+
+    public static synchronized String toStringue(){
+        StringBuilder sb = new StringBuilder("Services disponibles:\n");
+        for (int i=0; i< servicesClasses.size(); i++){
+            Class<?> c = servicesClasses.get(i);
+            try {
+                Method m = c.getMethod("toStringue");
+                String desc = (String) m.invoke(null);//excécuter méthode statique sans instancier une classe
+                sb.append(i + 1).append(". ").append(desc).append("\n");
+            }catch (Exception e) {
+                // Déjà contrôlé dans addService
+                //juste là car on utilise Method.invoke()
+            }
+        }
+        return sb.toString();
+    }
 }

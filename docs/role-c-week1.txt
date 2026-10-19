@@ -1,0 +1,95 @@
+Role C - Week 1 notes
+
+The amateur client connects to the server, displays its service list and lets
+the user choose a service. It sends one line of text and prints the result.
+The three example services reverse text, convert it to uppercase and count words.
+
+The services are in the demo package. This assumes the programmer's login will
+be demo, since the assignment requires the package name to match the login.
+No programmer account is created by this code.
+
+Running it in Eclipse
+
+Use Java 17 and add both src and test as source folders in the project's Java
+Build Path. Set the project text encoding to UTF-8.
+
+First, run AmateurFlowTest as a Java Application. It starts its own temporary
+server connections, so nothing else needs to be running. If the checks pass,
+the console prints:
+
+    OK : 16 verifications.
+
+To try the client yourself, run AmateurTestServer as a Java Application and
+leave it running. Its default port is 5000.
+
+Then create a Java Application run configuration for clientama.ClientAma.
+Under Arguments, set the program arguments to:
+
+    localhost 5000
+
+Set the console encoding to UTF-8 in the Common tab, then run the client.
+Choose 1 and enter bonjour. The result should be ruojnob. Run the client again
+to try 2 for uppercase or 3 for word count. Each connection runs one service
+once, so the client ending after the result is normal.
+
+An empty line is accepted as text. Word count treats whitespace as the separator
+between words; punctuation does not split a word. Enter /quit at the service
+selection to exit. Use Eclipse's Terminate button to stop the test server.
+
+Running it from PowerShell
+
+From the project folder:
+
+    New-Item -ItemType Directory -Force out | Out-Null
+    $javaSources = Get-ChildItem src,test -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+    javac -encoding UTF-8 -d out $javaSources
+    java -cp out clientama.AmateurFlowTest
+
+For a manual test, start the server:
+
+    java -cp out support.AmateurTestServer 5000
+
+In another terminal, start the client:
+
+    java -cp out clientama.ClientAma localhost 5000
+
+The compiled files go into out, which is ignored by Git. No extra libraries
+are needed.
+
+Protocol to agree on with Role A
+
+This is the protocol used by the client and test server. It is provisional
+until the group agrees on it. Messages use UTF-8, with one message per line.
+
+The server sends the numbered menu followed by an empty line. The client sends
+the chosen service number. The server creates the service with the socket and
+runs it. The service sends a prompt, reads one line of text, sends one result
+line and closes the connection. Flush the output after sending each message.
+
+If the number does not match a service, the server sends:
+
+    ERROR Service inconnu.
+
+It then closes the connection. The client displays the error without asking
+for text. Non-numeric or non-positive selections are handled by the client,
+which asks the user to try again.
+
+The client waits for the service prompt before sending the text. Keep that
+order so the server's menu reader does not buffer text intended for the service.
+The session handler must keep the socket open until the service has finished.
+
+The client allows 5 seconds to connect and 30 seconds for a network read.
+The test server allows 120 seconds for each read. Port 5000 is the demo default;
+the actual amateur port still needs to be agreed on with Role A.
+
+What has been tested and what is left
+
+The automated checks cover the menu, all three services, accented characters,
+empty text, whitespace, invalid choices, unknown services, quitting, end of
+input and three simultaneous clients. They use real local socket connections.
+
+These checks use AmateurTestServer, not Role A's final server. That server still
+needs to be tested with the client. Role A provides the amateur port, menu and
+service launch. Role B handles class loading and the package/login check.
+The test server registers the classes directly, so these tests do not cover
+dynamic loading, accounts or FTP.

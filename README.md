@@ -7,6 +7,12 @@ Le but du projet est de créer un serveur capable de recevoir de nouveaux servic
 
 * bri.Service : L'interface que tous les services doivent suivre (hérite de Runnable)
 * bri.ServiceRegistry : Le registre qui permet de vérifier et de garder la liste des services autorisés
+* clientama.ClientAma : Le client console amateur (semaine 1, rôle C)
+* demo : Les services d'inversion, de majuscules et de comptage de mots
+
+Compilation, démonstration locale, tests et protocole provisoire :
+[Guide du rôle C, semaine 1 (en anglais)](docs/role-c-week1.txt).
+Le serveur de démonstration est dans `test/` ; l'intégration avec le vrai serveur reste à faire.
 
 
 ## La norme BRi
@@ -44,6 +50,12 @@ The goal of this project is to build a server capable of receiving new services 
 
 - bri.Service: The interface that all services must implement (extends Runnable)
 - bri.ServiceRegistry: The central registry used to validate and keep track of authorized services
+- clientama.ClientAma: The amateur console client (Week 1, Role C)
+- demo: Text reversal, uppercase, and word-count services
+
+See the [Role C Week 1 guide](docs/role-c-week1.txt) for compilation, a local demo,
+tests, and the provisional protocol. The demo server lives in `test/`;
+integration with the real server is still pending.
 
 
 ## The BRi Standard

@@ -1,6 +1,5 @@
 package bri;
 
-import bri.ProgrammeurRegistry;
 public class ProgrammerAccountTest {
     public static void main (String[] args) {
         ProgrammeurRegistry registry = new ProgrammeurRegistry();

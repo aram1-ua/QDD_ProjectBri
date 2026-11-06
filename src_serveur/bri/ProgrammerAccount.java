@@ -1,7 +1,7 @@
 package bri;
 
 public class ProgrammerAccount {
-    private String login, password; // Pk final ?
+    private String login, password;
 
     private String ftpUrl;
 

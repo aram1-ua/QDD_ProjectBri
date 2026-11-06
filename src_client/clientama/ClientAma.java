@@ -5,7 +5,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-/** Client console : une connexion permet d'utiliser un service une fois. */
 public class ClientAma {
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -24,7 +23,6 @@ public class ClientAma {
         }
     }
 
-    /** Les flux de la console restent ouverts pour leur proprietaire. */
     public static void run(String host, int port, Reader input, Writer output) throws IOException {
         BufferedReader console = new BufferedReader(input);
         PrintWriter display = new PrintWriter(output, true);
@@ -56,7 +54,7 @@ public class ClientAma {
                         break;
                     }
                 } catch (NumberFormatException ignored) {
-                    // Une nouvelle saisie sera demandee ci-dessous.
+                    // une nouvelle saisie sera demandee
                 }
                 display.println("Entrez un entier positif.");
             }
@@ -76,7 +74,7 @@ public class ClientAma {
             sendLine(request, text);
             String result = server.readLine();
             if (result == null) {
-                throw new EOFException("Le service n'a pas renvoye de resultat.");
+                throw new EOFException("Le service n'a pas renvoyé de résultat.");
             }
             display.println(result);
         }

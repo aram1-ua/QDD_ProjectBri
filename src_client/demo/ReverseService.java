@@ -5,15 +5,15 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class WordCountService implements Service {
+public class ReverseService implements Service {
     private final Socket socket;
 
-    public WordCountService(Socket socket) {
+    public ReverseService(Socket socket) {
         this.socket = socket;
     }
 
     public static String toStringue() {
-        return "Compter les mots d'un texte";
+        return "Inverser un texte";
     }
 
     @Override
@@ -23,18 +23,16 @@ public class WordCountService implements Service {
                     connection.getInputStream(), StandardCharsets.UTF_8));
             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(
                     connection.getOutputStream(), StandardCharsets.UTF_8));
-            output.write("Entrez le texte dont il faut compter les mots :\n");
+            output.write("Entrez le texte a inverser :\n");
             output.flush();
             String text = input.readLine();
             if (text != null) {
-                // Un mot est une suite de caracteres separes par des espaces Unicode.
-                long count = java.util.regex.Pattern.compile("(?U)\\S+").matcher(text).results().count();
-                output.write(Long.toString(count));
+                output.write(new StringBuilder(text).reverse().toString());
                 output.newLine();
                 output.flush();
             }
         } catch (IOException e) {
-            System.err.println("Service comptage : " + e.getMessage());
+            System.err.println("Service inversion : " + e.getMessage());
         }
     }
 }

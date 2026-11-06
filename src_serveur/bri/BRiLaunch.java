@@ -19,7 +19,7 @@ public class BRiLaunch{
             System.err.println("Erreur lors de l'enregistrement des services : " + e.getMessage());
         }
 
-        // --- PORT AMATEURS (3000) ---
+        // PORT AMATEURS (3000)
         new Thread(() -> {
             try (ServerSocket serverAmateur = new ServerSocket(3000)) {
                 System.out.println("Serveur Amateur démarré sur le port 3000...");
@@ -34,7 +34,7 @@ public class BRiLaunch{
         }).start();
 
 
-        // --- PORT PROGRAMMEURS (4000) ---
+        // PORT PROGRAMMEURS (4000)
         new Thread(() -> {
             try (ServerSocket serverProg = new ServerSocket(4000)) {
                 System.out.println("Serveur Programmeur démarré sur le port 4000...");

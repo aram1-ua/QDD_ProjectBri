@@ -42,7 +42,7 @@ public class BRiLaunch{
                 while (true) {
                     Socket socket = serverProg.accept();
 
-                    // new Thread(new ServiceProg(socket)).start();
+                    new Thread(new ServiceProg(socket)).start();
 
                 }
             } catch (Exception e) {

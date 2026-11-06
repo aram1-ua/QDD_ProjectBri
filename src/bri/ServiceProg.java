@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 
 public class ServiceProg implements Runnable {
@@ -30,32 +32,9 @@ public class ServiceProg implements Runnable {
             if (choix == null) return;
 
             switch (choix.trim()) {
-                case "1" -> {
-                    String login = input.readLine();
-                    String mdp = input.readLine();
-                    String ftp = input.readLine();
-                    boolean ok = registry.register(login, mdp, ftp);
-                    output.write(ok ? "OK\n" : "ERROR\n");
-                }
-                case "2" -> {
-                    String login = input.readLine();
-                    String mdp = input.readLine();
-                    if (!registry.authenticate(login, mdp)) {
-                        output.write("ERROR Auth\n");
-                    } else {
-                        String className = input.readLine();
-                        Class<?> c = Class.forName(className);
-                        ServiceRegistry.addService(c);
-                        output.write("OK Service ajoute\n");
-                    }
-                }
-                case "3" -> {
-                    String login = input.readLine();
-                    String mdp = input.readLine();
-                    String newFtp = input.readLine();
-                    boolean ok = registry.updateFtpUrl(login, mdp, newFtp);
-                    output.write(ok ? "OK\n" : "ERROR\n");
-                }
+                case "1" -> handleRegister(input, output);
+                case "2" -> handleAddService(input, output);
+                case "3" -> handleUpdateFtp(input, output);
                 default -> output.write("ERROR Choix invalide\n");
             }
             output.flush();
@@ -63,5 +42,61 @@ public class ServiceProg implements Runnable {
         } catch (Exception e) {
             System.err.println("Erreur ServiceProg : " + e.getMessage());
         }
+    }
+
+    private void handleRegister(BufferedReader input, BufferedWriter output) throws Exception {
+        String login = input.readLine();
+        String mdp = input.readLine();
+        String ftp = input.readLine();
+        boolean ok = registry.register(login, mdp, ftp);
+        output.write(ok ? "OK Inscription reussie\n" : "ERROR Inscription echouee\n");
+    }
+
+    private void handleAddService(BufferedReader input, BufferedWriter output) throws Exception {
+        String login = input.readLine();
+        String mdp = input.readLine();
+
+        // Authentification
+        if (!registry.authenticate(login, mdp)) {
+            output.write("ERROR Auth invalide\n");
+            return;
+        }
+
+        ProgrammerAccount account = registry.getAccount(login);
+        String className = input.readLine(); // ex: demo.ReverseService
+
+        // Vérification du nom de package
+        if (!className.startsWith(login + ".")) {
+            output.write("ERROR Le package de la classe doit correspondre au login: " + login + "\n");
+            return;
+        }
+
+        // Chargement dynamique FTP
+        try {
+            String ftpUrl = account.getFtpUrl();
+            if (!ftpUrl.endsWith("/")) {
+                ftpUrl += "/";
+            }
+            URL[] urls = new URL[]{ new URL(ftpUrl) };
+
+            URLClassLoader classLoader = new URLClassLoader(urls);
+            Class<?> serviceClass = classLoader.loadClass(className);
+
+            ServiceRegistry.addService(serviceClass);
+            output.write("OK Service ajoute avec succes depuis FTP\n");
+
+        } catch (ClassNotFoundException e) {
+            output.write("ERROR Classe introuvable sur le serveur FTP\n");
+        } catch (Exception e) {
+            output.write("ERROR Erreur lors du chargement : " + e.getMessage() + "\n");
+        }
+    }
+
+    private void handleUpdateFtp(BufferedReader input, BufferedWriter output) throws Exception {
+        String login = input.readLine();
+        String mdp = input.readLine();
+        String newFtp = input.readLine();
+        boolean ok = registry.updateFtpUrl(login, mdp, newFtp);
+        output.write(ok ? "OK URL FTP mise a jour\n" : "ERROR Auth invalide\n");
     }
 }

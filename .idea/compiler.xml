@@ -9,7 +9,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="QDD_BRiServices" target="24" />
+      <module name="QDD_ProjectBri" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

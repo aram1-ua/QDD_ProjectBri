@@ -1,2 +1,2 @@
-/** Programmer client package. Implementation to be added. */
+/** Console client for programmer account and dynamic service management. */
 package clientprog;

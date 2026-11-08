@@ -1,9 +1,9 @@
 package bri;
 
 public class ProgrammerAccount {
-    private String login, password;
+    private final String login, password;
 
-    private String ftpUrl;
+    private volatile String ftpUrl;
 
     public ProgrammerAccount(String login, String password, String ftpUrl){
         this.login = login;

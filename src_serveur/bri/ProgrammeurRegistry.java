@@ -2,13 +2,17 @@ package bri;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.net.URI;
+import javax.lang.model.SourceVersion;
 
 public class ProgrammeurRegistry {
 
     private final Map<String, ProgrammerAccount> accounts = new HashMap<>();
 
-    public boolean register (String login, String password, String ftpUrl ){
-        if ( login == null || login.isBlank() || password == null || password.isBlank() || ftpUrl == null || ftpUrl.isBlank()){
+    public synchronized boolean register (String login, String password, String ftpUrl ){
+        if (login == null || !SourceVersion.isIdentifier(login) || SourceVersion.isKeyword(login)
+                || login.equals("java") || login.equals("javax") || login.equals("bri")
+                || password == null || password.isBlank() || !validFtpUrl(ftpUrl)){
             return false;
         }
 
@@ -22,18 +26,18 @@ public class ProgrammeurRegistry {
         return true;
     }
 
-    public boolean authenticate(String login, String password) {
+    public synchronized boolean authenticate(String login, String password) {
         ProgrammerAccount account = accounts.get(login);
 
         return account != null
                 && account.getPassword().equals(password);
     }
 
-    // how to update the url of an account ?
-    public boolean updateFtpUrl (String login, String password, String newFtpUrl){
+    // Account operations are synchronized because programmer sessions run concurrently.
+    public synchronized boolean updateFtpUrl (String login, String password, String newFtpUrl){
         ProgrammerAccount account = accounts.get(login);
 
-        if ( account !=null && account.getPassword().equals(password) && newFtpUrl != null && !newFtpUrl.isBlank()){
+        if ( account !=null && account.getPassword().equals(password) && validFtpUrl(newFtpUrl)){
             account.setFtpUrl(newFtpUrl);
             return true;
         }
@@ -42,8 +46,18 @@ public class ProgrammeurRegistry {
         }
     }
 
-    public ProgrammerAccount getAccount ( String login) {
+    public synchronized ProgrammerAccount getAccount ( String login) {
         return accounts.get(login);
+    }
+
+    private static boolean validFtpUrl(String value) {
+        if (value == null) return false;
+        try {
+            URI uri = URI.create(value);
+            return "ftp".equals(uri.getScheme()) && uri.getHost() != null
+                    && uri.getQuery() == null && uri.getFragment() == null
+                    && (uri.getPort() == -1 || uri.getPort() > 0 && uri.getPort() <= 65535);
+        } catch (IllegalArgumentException e) { return false; }
     }
 
 }

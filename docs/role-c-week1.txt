@@ -1,4 +1,4 @@
-Role C - Week 1 notes
+Role C - Week 1 notes (historical demo; current full-platform instructions: README.md)
 
 The amateur client connects to the server, displays its service list and lets
 the user choose a service. It sends one line of text and prints the result.
@@ -10,7 +10,7 @@ No programmer account is created by this code.
 
 Running it in Eclipse
 
-Use Java 17 and add both src and test as source folders in the project's Java
+Use Java 17 and add src_client, src_serveur and test as source folders in the project's Java
 Build Path. Set the project text encoding to UTF-8.
 
 First, run AmateurFlowTest as a Java Application. It starts its own temporary
@@ -20,12 +20,12 @@ the console prints:
     OK : 16 verifications.
 
 To try the client yourself, run AmateurTestServer as a Java Application and
-leave it running. Its default port is 5000.
+leave it running. Its default port is 3000, as agreed with Role A.
 
 Then create a Java Application run configuration for clientama.ClientAma.
 Under Arguments, set the program arguments to:
 
-    localhost 5000
+    localhost 3000
 
 Set the console encoding to UTF-8 in the Common tab, then run the client.
 Choose 1 and enter bonjour. The result should be ruojnob. Run the client again
@@ -40,20 +40,18 @@ Running it from PowerShell
 
 From the project folder:
 
-    New-Item -ItemType Directory -Force out | Out-Null
-    $javaSources = Get-ChildItem src,test -Recurse -Filter *.java | ForEach-Object { $_.FullName }
-    javac -encoding UTF-8 -d out $javaSources
-    java -cp out clientama.AmateurFlowTest
+    ./build.ps1
+    java -cp build/classes clientama.AmateurFlowTest
 
 For a manual test, start the server:
 
-    java -cp out support.AmateurTestServer 5000
+    java -cp build/classes support.AmateurTestServer 3000
 
 In another terminal, start the client:
 
-    java -cp out clientama.ClientAma localhost 5000
+    java -cp build/classes clientama.ClientAma localhost 3000
 
-The compiled files go into out, which is ignored by Git. No extra libraries
+The compiled files go into build/classes, which is ignored by Git. No extra libraries
 are needed.
 
 Protocol to agree on with Role A
@@ -79,8 +77,8 @@ order so the server's menu reader does not buffer text intended for the service.
 The session handler must keep the socket open until the service has finished.
 
 The client allows 5 seconds to connect and 30 seconds for a network read.
-The test server allows 120 seconds for each read. Port 5000 is the demo default;
-the actual amateur port still needs to be agreed on with Role A.
+The test server allows 120 seconds for each read. The amateur port agreed on
+with Role A is 3000. The demo uses the same port by default.
 
 What has been tested and what is left
 
@@ -88,8 +86,6 @@ The automated checks cover the menu, all three services, accented characters,
 empty text, whitespace, invalid choices, unknown services, quitting, end of
 input and three simultaneous clients. They use real local socket connections.
 
-These checks use AmateurTestServer, not Role A's final server. That server still
-needs to be tested with the client. Role A provides the amateur port, menu and
-service launch. Role B handles class loading and the package/login check.
-The test server registers the classes directly, so these tests do not cover
-dynamic loading, accounts or FTP.
+These original 16 checks use AmateurTestServer. The additional
+bri.PlatformFlowTest now exercises the real BRiLaunch handlers, both clients,
+FTP downloads and live replacement. Run ./test.ps1 for the complete suite.

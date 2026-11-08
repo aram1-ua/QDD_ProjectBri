@@ -16,6 +16,7 @@ public class ServiceAmateur implements Runnable{
     @Override
     public void run() {
         try (Socket connection = socket) {
+            connection.setSoTimeout(30000);
             // Flux pour lire ce que le client nous envoie
             BufferedReader input = new BufferedReader(new InputStreamReader(
                     connection.getInputStream(), StandardCharsets.UTF_8));

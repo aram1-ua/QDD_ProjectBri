@@ -48,7 +48,7 @@ public class AmateurTestServer {
     }
 
     public static void main(String[] args) throws Exception {
-        int port = args.length == 0 ? 5000 : Integer.parseInt(args[0]);
+        int port = args.length == 0 ? 3000 : Integer.parseInt(args[0]);
         registerServices();
         try (ServerSocket server = new ServerSocket(port, 50, InetAddress.getLoopbackAddress())) {
             System.out.println("Serveur de test amateur : localhost:" + server.getLocalPort());
